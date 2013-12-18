@@ -175,7 +175,7 @@ class ComponentTestCase(BaseComponentTestCase):
     name = "name-component"
     apps = [{
         "name": name,
-        "file": os.path.join(os.path.dirname(__file__), '../%s.yml'.format(name))
+        "file": os.path.realpath(os.path.join(os.path.dirname(__file__), '../%s.yml' % name))
     }]
 """
 
