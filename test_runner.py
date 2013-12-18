@@ -26,10 +26,10 @@ parameters = {
     'pass': os.environ['QUBELL_PASS'],
     'tenant': os.environ['QUBELL_TENANT'],
     'provider_name': os.getenv('PROVIDER_NAME', "test-provider"),
-    'provider_type': os.getenv('PROVIDER_TYPE', None),
-    'provider_identity': os.getenv('PROVIDER_IDENTITY', None),
-    'provider_credential': os.getenv('PROVIDER_CREDENTIAL', None),
-    'provider_region': os.getenv('PROVIDER_REGION', None)
+    'provider_type': os.environ['PROVIDER_TYPE'],
+    'provider_identity': os.environ['PROVIDER_IDENTITY'],
+    'provider_credential': os.environ['PROVIDER_CREDENTIAL'],
+    'provider_region': os.environ['PROVIDER_REGION']
 }
 
 context = Context(user=parameters['user'], password=parameters['pass'], api=parameters['tenant'])
