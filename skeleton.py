@@ -54,13 +54,23 @@ def new(component_dir):
 
     mkdir_p(test_dir)
 
-    write(join(component_dir, 'build.sh'), build_sh(test_dir))
+    build_sh_path = join(component_dir, 'build.sh')
+
+    write(build_sh_path, build_sh(test_dir))
     write(join(component_dir, ".travis.yml"), travis_template(test_dir))
     write(join(test_dir, "test_example.py"), template_test())
 
-
     copy(join(skeleton_dir, "test_runner.py"), join(test_dir, "test_runner.py"))
     copy(join(skeleton_dir, "requirements.txt"), join(test_dir, "requirements.txt"))
+
+    chmod_x(build_sh_path)
+
+
+def chmod_x(path):
+    import stat
+
+    file_stat = os.stat(path)
+    os.chmod(path, file_stat.st_mode | stat.S_IEXEC)
 
 
 def copy(path, target):
@@ -68,6 +78,7 @@ def copy(path, target):
         shutil.copy2(path, target)
     else:
         print '%s already exist' % path
+
 
 def write(path, content):
     if not os.path.exists(path):
