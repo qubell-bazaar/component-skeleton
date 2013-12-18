@@ -51,9 +51,4 @@ class BaseComponentTestCase(BaseTestCase):
         return base_env
 
 if __name__ == '__main__':
-    if len(sys.argv) > 0:
-        test_dir = os.path.relpath(sys.argv[0])
-    else:
-        test_dir = os.path.relpath("./")
-
-    unittest.main(argv=["qubell-test-runner", "discover", "--pattern=" + os.path.join(test_dir, "test*.py")])
+    unittest.main(argv=["qubell-test-runner", "discover", "--pattern=test*.py"])

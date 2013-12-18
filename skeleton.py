@@ -58,9 +58,16 @@ def new(component_dir):
     write(join(component_dir, ".travis.yml"), travis_template(test_dir))
     write(join(test_dir, "test_example.py"), template_test())
 
-    shutil.copy2(join(skeleton_dir, "test_runner.py"), join(test_dir, "test_runner.py"))
-    shutil.copy2(join(skeleton_dir, "requirements.txt"), join(test_dir, "requirements.txt"))
 
+    copy(join(skeleton_dir, "test_runner.py"), join(test_dir, "test_runner.py"))
+    copy(join(skeleton_dir, "requirements.txt"), join(test_dir, "requirements.txt"))
+
+
+def copy(path, target):
+    if not os.path.exists(target):
+        shutil.copy2(path, target)
+    else:
+        print '%s already exist' % path
 
 def write(path, content):
     if not os.path.exists(path):
