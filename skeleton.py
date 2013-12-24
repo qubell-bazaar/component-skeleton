@@ -120,6 +120,8 @@ def build_sh(test_dir):
 
 REPO_NAME=$(echo ${TRAVIS_REPO_SLUG} | cut -d/ -f2)
 OWNER_NAME=$(echo ${TRAVIS_REPO_SLUG} | cut -d/ -f1)
+GIT_REVISION=$(git log --pretty=format:'%h' -n 1)
+LAST_COMMIT_AUTHOR=$(git log --pretty=format:'%an' -n1)
 
 function check {
     "$@"
@@ -146,21 +148,44 @@ function publish {
 }
 
 function replace {
-    check sed -i.bak -e 's/'${REPO_NAME}'-cookbooks-stable/'${REPO_NAME}'-cookbooks-dev/g' ${REPO_NAME}.yml
+    local REVISION=$1
+
+    check sed -i.bak -e 's/'${REPO_NAME}'-cookbooks-stable-[[:alnum:]]*.tar.gz/'${REPO_NAME}'-cookbooks-'${REVISION}'.tar.gz/g' ${REPO_NAME}.yml
     cat ${REPO_NAME}.yml
 }
 
+function publish_github {
+    GIT_URL=$(git config remote.origin.url)
+    NEW_GIT_URL=$(echo $GIT_URL | sed -e 's/^git:/https:/g')
 
-publish dev
-replace
+    git remote set-url --push origin $NEW_GIT_URL
+    git remote set-branches --add origin master
+    git fetch -q
+    git config user.name ${GIT_NAME}
+    git config user.email ${GIT_EMAIL}
+    git config credential.helper "store --file=.git/credentials"
+    echo "https://${GH_TOKEN}:@github.com" > .git/credentials
+    rm -rf *.tar.gz
+    git commit -a -m "CI: Success build ${TRAVIS_BUILD_NUMBER}"
+    git checkout -b build
+    git push origin build:master
+    rm -rf .git/credentials
+}
 
-pushd %(test_dir)s
+if [[ ${TRAVIS_PULL_REQUEST} == "false" ]]; then
+    if [[ ${LAST_COMMIT_AUTHOR} != "CI" ]]; then
+        publish "stable-${GIT_REVISION}"
+        replace "stable-${GIT_REVISION}"
 
-check python test_runner.py
+        pushd %(test_dir)s
 
-popd
+        check python test_runner.py
 
-publish stable
+        popd
+
+        publish_github
+    fi
+fi
 """ % {"test_dir": os.path.basename(test_dir)}
 
 
