@@ -177,7 +177,7 @@ if [[ ${TRAVIS_PULL_REQUEST} == "false" ]]; then
         publish "stable-${GIT_REVISION}"
         replace "stable-${GIT_REVISION}"
 
-        pushd %(test_dir)s
+        pushd test
 
         check python test_runner.py
 
@@ -186,7 +186,7 @@ if [[ ${TRAVIS_PULL_REQUEST} == "false" ]]; then
         publish_github
     fi
 fi
-""" % {"test_dir": os.path.basename(test_dir)}
+"""
 
 
 def template_test():
