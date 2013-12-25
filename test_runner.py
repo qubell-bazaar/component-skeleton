@@ -51,4 +51,4 @@ class BaseComponentTestCase(BaseTestCase):
         return base_env
 
 if __name__ == '__main__':
-    unittest.main(argv=["qubell-test-runner", "discover", "--pattern=test*.py"])
+    unittest.main(argv=["qubell-test-runner", "discover", "--pattern=test*.py", "-v"])

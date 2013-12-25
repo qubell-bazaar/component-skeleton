@@ -193,9 +193,12 @@ def template_test():
     return """import os
 
 from test_runner import BaseComponentTestCase
-from qubell.api.private.testing import instance, workflow, values
+from qubell.api.private.testing import instance, environment, workflow, values
 
 
+@environment({
+    "default": {}
+})
 class ComponentTestCase(BaseComponentTestCase):
     name = "name-component"
     apps = [{
