@@ -96,10 +96,25 @@ def mkdir_p(target_dir):
 def travis_template(test_dir):
     return """env:
  global:
+
+    ## Fill environment variables:
+    ## (You may secure your keys using: http://about.travis-ci.org/docs/user/encryption-keys/)
+
     - "QUBELL_TENANT=https://express.qubell.com"
-    ## fill environment variables:
-    ## QUBELL_USER, QUBELL_PASS, QUBELL_TENANT, PROVIDER_NAME, PROVIDER_TYPE, PROVIDER_IDENTITY, PROVIDER_CREDENTIAL, PROVIDER_REGION
+    ## QUBELL_USER, QUBELL_PASS 
+    ## - These are for Qubell authentication, use user with Basic auth
+
+    ## PROVIDER_NAME, PROVIDER_TYPE, PROVIDER_REGION, PROVIDER_IDENTITY, PROVIDER_CREDENTIAL
+    ## - These are for Cloud Account setting, when you need to provision virtual machines
+    ## - Identity and Credential must be secured
+
     ## ARTIFACTS_AWS_REGION, ARTIFACTS_S3_BUCKET, ARTIFACTS_AWS_ACCESS_KEY_ID, ARTIFACTS_AWS_SECRET_ACCESS_KEY
+    ## - These are for publishing Cookbooks
+    ## - Access Key Id and Secret Access Key must be secured
+
+    ## GIT_NAME, GIT_EMAIL, GH_TOKEN
+    ## - These are for push back to github of verified cookbooks
+    ## - All must be secured
 
 language: python
 python:
@@ -156,20 +171,17 @@ function replace {
 
 function publish_github {
     GIT_URL=$(git config remote.origin.url)
-    NEW_GIT_URL=$(echo $GIT_URL | sed -e 's/^git:/https:/g')
+    NEW_GIT_URL=$(echo $GIT_URL | sed -e 's/^git:/https:/g' | sed -e 's/^https:\/\//https:\/\/'${GH_TOKEN}':@/')
 
-    git remote set-url --push origin $NEW_GIT_URL
-    git remote set-branches --add origin master
+    git remote rm origin
+    git remote add origin ${NEW_GIT_URL}
     git fetch -q
     git config user.name ${GIT_NAME}
     git config user.email ${GIT_EMAIL}
-    git config credential.helper "store --file=.git/credentials"
-    echo "https://${GH_TOKEN}:@github.com" > .git/credentials
     rm -rf *.tar.gz
-    git commit -a -m "CI: Success build ${TRAVIS_BUILD_NUMBER}"
+    git commit -a -m "CI: Success build ${TRAVIS_BUILD_NUMBER} [skip ci]"
     git checkout -b build
-    git push origin build:master
-    rm -rf .git/credentials
+    git push -q origin build:master
 }
 
 if [[ ${TRAVIS_PULL_REQUEST} == "false" ]]; then
@@ -205,6 +217,12 @@ class ComponentTestCase(BaseComponentTestCase):
         "name": name,
         "file": os.path.realpath(os.path.join(os.path.dirname(__file__), '../%s.yml' % name))
     }]
+
+    def test_fail(self):
+        assert Fail, "Test is not implemented, start to write your tests here"
+
+    def test_pass(self):
+        assert True, "Just another test, that passes"
 """
 
 
