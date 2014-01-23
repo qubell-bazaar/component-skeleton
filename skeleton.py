@@ -101,7 +101,7 @@ def travis_template(test_dir):
     ## (You may secure your keys using: http://about.travis-ci.org/docs/user/encryption-keys/)
 
     - "QUBELL_TENANT=https://express.qubell.com"
-    ## QUBELL_USER, QUBELL_PASS 
+    ## QUBELL_USER, QUBELL_PASSWORD 
     ## - These are for Qubell authentication, use user with Basic auth
 
     ## PROVIDER_NAME, PROVIDER_TYPE, PROVIDER_REGION, PROVIDER_IDENTITY, PROVIDER_CREDENTIAL
