@@ -92,17 +92,21 @@ if [[ ${LAST_COMMIT_AUTHOR} != "Jenkins" ]]; then
         publish "stable-${GIT_REVISION}"
         replace "stable-${GIT_REVISION}"
 
-        pushd test
-
-        check python test_runner.py
-
-        popd
-  if [[ ${PULL_REQUEST} == "false" ]]; then
-  if [[ ! -z $VERSION ]]; then
+        virtualenv --no-site-packages .lime-env
+        source .lime-env/bin/activate
+        pip install -r test/requirements.txt
+        nosetests --verbose --with-xunitmp --xunitmp-file=report.xml test 2>&1
+        RET=$?
+  if [[ $RET -eq 0 ]]; then
+    if [[ ${PULL_REQUEST} == "false" ]]; then
+      if [[ ! -z $VERSION ]]; then
         update_version
-  fi
+      fi
         publish_github
+    fi
+  else 
+    echo "Tests failed.  See report above" >&2
+    exit $RET
   fi
-
 fi
 
