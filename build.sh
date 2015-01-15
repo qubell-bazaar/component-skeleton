@@ -55,7 +55,7 @@ function replace {
 
 function update_version {
     check sed  -i.bak -e 's/^Version.*$/Version '${VERSION}'/g;s/'${REPO_NAME}'\/.*\/meta.yml/'${REPO_NAME}'\/'${VERSION}'\/meta.yml/g' README.md
-    check sed  -i.bak -e 's/'${REPO_NAME}'\/.*\/'${REPO_NAME}'.yml/'${REPO_NAME}'\/'${VERSION}'\/'${REPO_NAME}'.yml/g' meta.yml
+    check sed -i.bak -e 's/'${REPO_NAME}'\/.*\//'${REPO_NAME}'\/'${VERSION}'\//g' meta.yml
 }
 
 
