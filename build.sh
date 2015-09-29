@@ -8,6 +8,7 @@ LAST_COMMIT_AUTHOR=$(git log --pretty=format:'%an' -n1)
 BRANCH_NAME=$(echo $GIT_BRANCH|sed -e 's/origin\///g')
 COMMIT_MESSAGE=$(git log --format=%B -n1)
 VERSION=$(echo $COMMIT_MESSAGE|grep -o 'version:.*'|cut -d: -f2|sed -e 's/^[ \t]*//g;s/[ \t].*$//g')
+BERKS_VERSION=$(berks version |head -1|sed -e 's/^.*(//g;s/).*$//g'|awk -F "." '{print $1}')
 
 function check {
     "$@"
@@ -23,7 +24,11 @@ function berks_install {
     local INSTALL_PATH=$1
 
     berks -d
-    berks install -p ${INSTALL_PATH}
+    if [ $BERKS_VERSION -eq 2 ]; then
+      berks install -p ${INSTALL_PATH}
+    elif [ $BERKS_VERSION -eq 3 ]; then
+      berks vendor ${INSTALL_PATH}
+    fi
 }
 
 function package {
