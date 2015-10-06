@@ -100,7 +100,7 @@ if [[ ${LAST_COMMIT_AUTHOR} != "Jenkins" ]]; then
         virtualenv --no-site-packages .lime-env
         source .lime-env/bin/activate
         pip install -r test/requirements.txt
-        nosetests --verbose --with-xunitmp --xunitmp-file=report.xml test 2>&1
+        nosetests --nologcapture --verbose --with-xunitmp --xunitmp-file=report.xml test 2>&1
         RET=$?
   if [[ $RET -eq 0 ]]; then
     if [[ ${PULL_REQUEST} == "false" ]]; then
