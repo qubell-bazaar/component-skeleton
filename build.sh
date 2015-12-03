@@ -26,7 +26,7 @@ function berks_install {
     berks -d
     if [ $BERKS_VERSION -eq 2 ]; then
       berks install -p ${INSTALL_PATH}
-    elif [ $BERKS_VERSION -eq 3 ]; then
+    else
       berks vendor ${INSTALL_PATH}
     fi
 }
