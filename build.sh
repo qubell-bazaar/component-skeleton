@@ -33,14 +33,15 @@ function berks_install {
 
 function package {
     local REVISION=$1
+    if [ -d berks/ ]; then 
+      berks_install berks/cookbooks
+      cd berks
 
-    berks_install berks/cookbooks
-    cd berks
+      tar -czf ${REPO_NAME}-cookbooks-${REVISION}.tar.gz cookbooks
 
-    tar -czf ${REPO_NAME}-cookbooks-${REVISION}.tar.gz cookbooks
-
-    cd ../
-    mv berks/${REPO_NAME}-cookbooks-${REVISION}.tar.gz ${REPO_NAME}-cookbooks-${REVISION}.tar.gz
+      cd ../
+      mv berks/${REPO_NAME}-cookbooks-${REVISION}.tar.gz ${REPO_NAME}-cookbooks-${REVISION}.tar.gz
+    fi
 }
 
 function publish {
